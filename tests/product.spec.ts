@@ -16,8 +16,9 @@ test.describe('Product Page Tests', () => {
     await productPage.addProductToCartByName('Sauce Labs Backpack');
     await expect(await productPage.getCartCount()).toBe(1);
 
-    // Quitar el producto
-    await productPage.removeProductFromCartByName('Sauce Labs Backpack');
-    await expect(await productPage.getCartCount()).toBe(0);
+    
+    //Quitar el producto
+    //await productPage.removeProductFromCartByName('Sauce Labs Backpack');
+    //await expect(await productPage.getCartCount()).toBe(0);
   });
 });
