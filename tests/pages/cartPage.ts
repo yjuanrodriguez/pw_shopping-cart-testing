@@ -16,7 +16,12 @@ export class CartPage extends BasePage {
   /** Verifica que estás en la página del carrito */
   async assertOnCartPage() {
     await this.page.waitForURL('**/cart.html');
-    await expect(this.page.locator('.title')).toHaveText('Your Cart');
+    // Prefer semantic heading check, fallback to `.title` class if not present
+    try {
+      await expect(this.page.getByRole('heading', { name: 'Your Cart' })).toBeVisible();
+    } catch (e) {
+      await expect(this.page.locator('.title')).toHaveText('Your Cart');
+    }
   }
 
   /** Devuelve la lista de nombres de productos en el carrito */
@@ -38,8 +43,9 @@ export class CartPage extends BasePage {
 
   /** Elimina un producto del carrito por nombre */
   async removeItemFromCart(productName: string) {
-    const product = this.page.locator('.cart_item', { hasText: productName });
-    const removeButton = product.locator('button:has-text("Remove")');
+    const productNameLocator = this.page.getByText(productName, { exact: true });
+    const product = productNameLocator.locator('xpath=ancestor::div[contains(@class, "cart_item")]');
+    const removeButton = product.getByRole('button', { name: 'Remove' });
     await removeButton.click();
   }
 
@@ -62,7 +68,9 @@ export class CartPage extends BasePage {
   }
   
 async assertProductIsInCart(productName: string) {
-  await expect(this.page.locator('.cart_item', { hasText: productName })).toBeVisible();
+  const productNameLocator = this.page.getByText(productName, { exact: true });
+  const product = productNameLocator.locator('xpath=ancestor::div[contains(@class, "cart_item")]');
+  await expect(product).toBeVisible();
 }
 
 

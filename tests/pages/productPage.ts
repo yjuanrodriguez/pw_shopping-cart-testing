@@ -22,7 +22,12 @@ export class ProductPage extends BasePage {
   // Verifica que la página de productos esté cargada correctamente */
   async assertOnProductPage() {
     await this.page.waitForURL('**/inventory.html');
-    await expect(this.pageTitle).toHaveText('Products');
+    // Prefer semantic heading check, fallback to `.title` class if not present
+    try {
+      await expect(this.page.getByRole('heading', { name: 'Products' })).toBeVisible();
+    } catch (e) {
+      await expect(this.pageTitle).toHaveText('Products');
+    }
   }
 
   
@@ -60,20 +65,23 @@ export class ProductPage extends BasePage {
 
   /** Añade un producto al carrito por nombre */
   async addProductToCartByName(productName: string) {
-    const productCard = this.page.locator('.inventory_item', { hasText: productName });
-    const addButton = productCard.locator('button:has-text("Add to cart")');
+    // Use the visible product name to find the product card, then use role-based button lookup
+    const productNameLocator = this.page.getByText(productName, { exact: true });
+    const productCard = productNameLocator.locator('xpath=ancestor::div[contains(@class, "inventory_item")]');
+    const addButton = productCard.getByRole('button', { name: 'Add to cart' });
     await addButton.click();
     // wait for the button to change to 'Remove' to ensure the action completed
-    await expect(productCard.locator('button')).toHaveText('Remove');
+    await expect(productCard.getByRole('button', { name: 'Remove' })).toBeVisible();
   }
 
   /** Elimina un producto del carrito por nombre */
   async removeProductFromCartByName(productName: string) {
-    const productCard = this.page.locator('.inventory_item', { hasText: productName });
-    const removeButton = productCard.locator('button:has-text("Remove")');
+    const productNameLocator = this.page.getByText(productName, { exact: true });
+    const productCard = productNameLocator.locator('xpath=ancestor::div[contains(@class, "inventory_item")]');
+    const removeButton = productCard.getByRole('button', { name: 'Remove' });
     await removeButton.click();
     // wait for the button to change back to 'Add to cart' to ensure the action completed
-    await expect(productCard.locator('button')).toHaveText('Add to cart');
+    await expect(productCard.getByRole('button', { name: 'Add to cart' })).toBeVisible();
   }
 
   /** Devuelve el número actual del badge del carrito */

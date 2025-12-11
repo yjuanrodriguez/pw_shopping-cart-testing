@@ -30,17 +30,7 @@ npx playwright install
 
 ## Workshop Tasks
 
-### 1. Basic Task: Login Test with Page Object Model
-Create a login test using the Page Object Model pattern.
-
-**Target URL:** https://the-internet.herokuapp.com/login
-
-**Requirements:**
-- Implement Page Object Model
-- Create a login test
-- Focus on proper page object structure
-
-### 2. Advanced Task: Shopping Cart Testing
+### . Advanced Task: Shopping Cart Testing
 Create comprehensive tests for shopping cart functionality.
 
 **Target URL:** https://www.saucedemo.com/
